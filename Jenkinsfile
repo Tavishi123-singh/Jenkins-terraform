@@ -1,104 +1,28 @@
-def tfCmd(String command, String options = '') {
-	ACCESS = "export AWS_PROFILE=${PROFILE} && export TF_ENV_profile=${PROFILE}"
-	sh ("cd $WORKSPACE/main && ${ACCESS} && terraform init") // main
-	//sh ("cd $WORKSPACE/base && ${ACCESS} && terraform init") // base
-	sh ("cd $WORKSPACE/main && terraform workspace select ${ENV_NAME} || terraform workspace new ${ENV_NAME}")
-	sh ("echo ${command} ${options}") 
-    sh ("cd $WORKSPACE/main && ${ACCESS} && terraform init && terraform ${command} ${options} && terraform show -no-color > show-${ENV_NAME}.txt")
-}
-
 pipeline {
-  agent { node { label 'tf-slave' } }
-
-	environment {
-		AWS_DEFAULT_REGION = "${params.AWS_REGION}"
-		PROFILE = "${params.PROFILE}"
-		ACTION = "${params.ACTION}"
-		PROJECT_DIR = "terraform/main"
+  agent any
+  options {
+        ansicolor('xterm')
   }
-	options {
-        buildDiscarder(logRotator(numToKeepStr: '30'))
-        timestamps()
-        timeout(time: 30, unit: 'MINUTES')
-        disableConcurrentBuilds()
-  }
-	parameters {
+  parameters {
 		choice (name: 'ACTION',
-				choices: [ 'plan', 'apply', 'destroy'],
-				description: 'Run terraform plan / apply / destroy')
+				choices: [ 'plan', 'apply'],
+				description: 'Run terraform plan / apply')
 		string (name: 'PROFILE',
 			   defaultValue: 'myprofile',
 			   description: 'Optional. Target aws profile defaults to myprofile')
+	        gitParameter branchFilter: 'origin/(.*)', defaultValue: '', name: 'BRANCH', type: 'PT_BRANCH'
 		
     }
 	stages {
-		stage('Checkout & Environment Prep'){
+		stage('Terraform plan') {
+			when { expression { ACTION == 'plan' } }
 			steps {
-				script {
-					wrap([$class: 'AnsiColorBuildWrapper', colorMapName: 'xterm']) {
-						withCredentials([
-							[ $class: 'AmazonWebServicesCredentialsBinding',
-								accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-								secretKeyVariable: 'AWS_SECRET_ACCESS_KEY',
-								//credentialsId: 'myprofile-AWS-access',
-								]])
-							{
-							try {
-								echo "Setting up Terraform"
-								def tfHome = tool name: 'terraform-0.12.20',
-									type: 'org.jenkinsci.plugins.terraform.TerraformInstallation'
-									env.PATH = "${tfHome}:${env.PATH}"
-									currentBuild.displayName += "[$AWS_REGION]::[$ACTION]"
-									sh("""
-										/usr/local/bin/aws configure --profile ${PROFILE} set aws_access_key_id ${AWS_ACCESS_KEY_ID}
-										/usr/local/bin/aws configure --profile ${PROFILE} set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}
-										/usr/local/bin/aws configure --profile ${PROFILE} set region ${AWS_REGION}
-										export AWS_PROFILE=${PROFILE}
-										export TF_ENV_profile=${PROFILE}
-										mkdir -p /home/jenkins/.terraform.d/plugins/linux_amd64
-									""")
-									tfCmd('version')
-							} catch (ex) {
-                                                                echo 'Err: Incremental Build failed with Error: ' + ex.toString()
-								currentBuild.result = "UNSTABLE"
-							}
-						}
-					}
-				}
-			}
-		}		
-		stage('terraform plan') {
-			when { anyOf
-					{
-						environment name: 'ACTION', value: 'plan';
-						environment name: 'ACTION', value: 'apply'
-					}
-				}
-			steps {
-				dir("${PROJECT_DIR}") {
-					script {
-						wrap([$class: 'AnsiColorBuildWrapper', colorMapName: 'xterm']) {
-							withCredentials([
-								[ $class: 'AmazonWebServicesCredentialsBinding',
-									accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-									secretKeyVariable: 'AWS_SECRET_ACCESS_KEY',
-									//credentialsId: 'myprofile-AWS-access',
-									]])
-								{
-								try {
-									tfCmd('plan', '-detailed-exitcode -out=tfplan')
-								} catch (ex) {
-									if (ex == 2 && "${ACTION}" == 'apply') {
-										currentBuild.result = "UNSTABLE"
-									} else if (ex == 2 && "${ACTION}" == 'plan') {
-										echo "Update found in plan tfplan"
-									} else {
-										echo "Try running terraform again in debug mode"
-									}
-								}
-							}
-						}
-					}
+				cleanWs()
+				git branch: "${params.BRANCH}", url: 'https://github.com/Tavishi123-singh/Jenkins-terraform.git'
+				dir("./terraform"){
+				sh 'echo "EXECUTING TERRAFORM PLAN !!"'
+				sh 'chmod u+x script.sh && ./script.sh'
+				//sh 'terrfaorm init -backend-config="conn_str=postgres://postgres"'
 				}
 			}
 		}
