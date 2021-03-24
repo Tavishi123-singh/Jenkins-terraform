@@ -1,8 +1,5 @@
 pipeline {
   agent any
-  options {
-        ansicolor('xterm')
-  }
   parameters {
 		choice (name: 'ACTION',
 				choices: [ 'plan', 'apply'],
