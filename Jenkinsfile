@@ -7,9 +7,9 @@ pipeline {
 		choice (name: 'ACTION',
 				choices: [ 'plan', 'apply'],
 				description: 'Run terraform plan / apply')
-		string (name: 'PROFILE',
+		/*string (name: 'PROFILE',
 			   defaultValue: 'myprofile',
-			   description: 'Optional. Target aws profile defaults to myprofile')
+			   description: 'Optional. Target aws profile defaults to myprofile')*/
 	        gitParameter branchFilter: 'origin/(.*)', defaultValue: '', name: 'BRANCH', type: 'PT_BRANCH'
 	  	//password (name: 'AWS_ACCESS_KEY_ID')
     		//password (name: 'AWS_SECRET_ACCESS_KEY')	
