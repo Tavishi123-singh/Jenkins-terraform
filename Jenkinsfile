@@ -20,29 +20,28 @@ pipeline {
     PROFILE = "${params.PROFILE}"
     ACTION = "${params.ACTION}"
   }*/
-	stages {
-		stage('Terraform plan') {
-			when { expression { ACTION == 'plan' } }
-			steps {
-				cleanWs()
-				git branch: '${params.BRANCH}', url: 'https://github.com/Tavishi123-singh/Jenkins-terraform.git'
-				dir("./terraform"){
-				sh 'echo "EXECUTING TERRAFORM PLAN !!"'
-				sh 'chmod u+x script.sh && ./script.sh'
-				sh 'terrfaorm init  && terraform plan'
-				
+  stages {
+	stage('Terraform plan') {
+	when { expression { ACTION == 'plan' } }
+		steps {
+			cleanWs()
+			git branch: '${params.BRANCH}', url: 'https://github.com/Tavishi123-singh/Jenkins-terraform.git'
+			dir("./terraform"){
+			sh 'echo "EXECUTING TERRAFORM PLAN !!"'
+			sh 'chmod u+x script.sh && ./script.sh'
+			sh 'terrfaorm init  && terraform plan'
 				}
 			}
 		}
-		stage('terraform apply') {
-			when { expression { ACTION == 'apply' } }
-			steps {
-				cleanWs()
-				git branch: '${params.BRANCH}', url: 'https://github.com/Tavishi123-singh/Jenkins-terraform.git'
-				dir("./terraform") {
-				sh 'echo "EXECUTING TERRAFORM APPLY !!"'
-				sh 'chmod u+x script.sh && ./script.sh'
-				sh 'terrfaorm init  && terraform apply --auto-approve'
+	stage('terraform apply') {
+	when { expression { ACTION == 'apply' } }
+		steps {
+			cleanWs()
+			git branch: '${params.BRANCH}', url: 'https://github.com/Tavishi123-singh/Jenkins-terraform.git'
+			dir("./terraform") {
+			sh 'echo "EXECUTING TERRAFORM APPLY !!"'
+			sh 'chmod u+x script.sh && ./script.sh'
+			sh 'terrfaorm init  && terraform apply --auto-approve'
 				}
 			}
 		}
