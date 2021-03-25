@@ -19,7 +19,7 @@ pipeline {
 				dir("./terraform"){
 				sh 'echo "EXECUTING TERRAFORM PLAN !!"'
 				sh 'chmod u+x script.sh && ./script.sh'
-				sh 'terrfaorm init -backend-config="conn_str=postgres:@localhost/terraform_backend?sslmode=disable" && terraform plan'
+				sh 'terrfaorm init  && terraform plan'
 				
 				}
 			}
@@ -32,7 +32,7 @@ pipeline {
 				dir("./terraform") {
 				sh 'echo "EXECUTING TERRAFORM APPLY !!"'
 				sh 'chmod u+x script.sh && ./script.sh'
-				sh 'terrfaorm init -backend-config="conn_str=postgres:@localhost/terraform_backend?sslmode=disable" && terraform apply --auto-approve'
+				sh 'terrfaorm init  && terraform apply --auto-approve'
 				}
 			}
 		}
