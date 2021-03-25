@@ -45,7 +45,7 @@ pipeline {
 				dir("./terraform") {
 				sh 'echo "EXECUTING TERRAFORM APPLY !!"'
 				sh 'chmod u+x script.sh && ./script.sh'
-				//sh 'terrfaorm init  && terraform apply --auto-approve'
+				sh 'terrfaorm init  && terraform apply --auto-approve'
 				}
 			}
 		}
