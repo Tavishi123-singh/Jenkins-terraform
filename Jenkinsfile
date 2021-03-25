@@ -1,7 +1,7 @@
 pipeline {
   agent any
   tools {
-	  terraform 'terraform-14'
+	  terraform 'terraform-11'
   }
   parameters {
 		choice (name: 'ACTION',
