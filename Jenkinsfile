@@ -14,7 +14,7 @@ pipeline {
 	  	//password (name: 'AWS_ACCESS_KEY_ID')
     		//password (name: 'AWS_SECRET_ACCESS_KEY')	
     }
-  environment {
+ /* environment {
     TF_WORKSPACE = 'Task1' //Sets the Terraform Workspace
     TF_IN_AUTOMATION = 'true'
     AWS_ACCESS_KEY_ID = "${params.AWS_ACCESS_KEY_ID}"
@@ -22,7 +22,7 @@ pipeline {
     //AWS_DEFAULT_REGION = "${params.AWS_REGION}"
     PROFILE = "${params.PROFILE}"
     ACTION = "${params.ACTION}"
-  }
+  }*/
 	stages {
 		stage('Terraform plan') {
 			when { expression { ACTION == 'plan' } }
