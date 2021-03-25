@@ -2,8 +2,8 @@ pipeline {
   agent any
   parameters {
 		choice (name: 'ACTION',
-				choices: [ 'plan', 'apply'],
-				description: 'Run terraform plan / apply')
+			   choices: [ 'plan', 'apply'],
+			   description: 'Run terraform plan / apply')
 		string (name: 'PROFILE',
 			   defaultValue: 'myprofile',
 			   description: 'Optional. Target aws profile defaults to myprofile')
@@ -24,7 +24,7 @@ pipeline {
 	stage('Terraform plan') {
 	when { expression { ACTION == 'plan' } }
 		steps {
-			cleanWs()
+			//cleanWs()
 			git branch: '${params.BRANCH}', url: 'https://github.com/Tavishi123-singh/Jenkins-terraform.git'
 			dir("./terraform"){
 			sh 'echo "EXECUTING TERRAFORM PLAN !!"'
@@ -36,7 +36,7 @@ pipeline {
 	stage('terraform apply') {
 	when { expression { ACTION == 'apply' } }
 		steps {
-			cleanWs()
+			//cleanWs()
 			git branch: '${params.BRANCH}', url: 'https://github.com/Tavishi123-singh/Jenkins-terraform.git'
 			dir("./terraform") {
 			sh 'echo "EXECUTING TERRAFORM APPLY !!"'
