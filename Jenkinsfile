@@ -7,7 +7,7 @@ pipeline {
 		string (name: 'PROFILE',
 			   defaultValue: 'myprofile',
 			   description: 'Optional. Target aws profile defaults to myprofile')
-	        gitParameter branchFilter: 'origin\(.*)', defaultValue: '', name: 'BRANCH', type: 'PT_BRANCH'
+	        gitParameter branchFilter: 'origin/(.*)', defaultValue: '', name: 'BRANCH', type: 'PT_BRANCH'
 		
     }
 	stages {
