@@ -7,7 +7,7 @@ pipeline {
 		string (name: 'PROFILE',
 			   defaultValue: 'myprofile',
 			   description: 'Optional. Target aws profile defaults to myprofile')
-	        gitParameter branchFilter: 'origin/(.*)', defaultValue: '', name: 'BRANCH', type: 'PT_BRANCH'
+	        gitParameter branchFilter: 'origin\(.*)', defaultValue: '', name: 'BRANCH', type: 'PT_BRANCH'
 		
     }
 	stages {
@@ -16,9 +16,9 @@ pipeline {
 			steps {
 				cleanWs()
 				git branch: "${params.BRANCH}", url: 'https://github.com/Tavishi123-singh/Jenkins-terraform.git'
-				dir("./terraform"){
+				dir(".\terraform"){
 				sh 'echo "EXECUTING TERRAFORM PLAN !!"'
-				sh 'chmod u+x script.sh && ./script.sh'
+				sh 'chmod u+x script.sh && .\script.sh'
 				//sh 'terrfaorm init  && terraform plan'
 				
 				}
@@ -29,9 +29,9 @@ pipeline {
 			steps {
 				cleanWs()
 				git branch: "${params.BRANCH}", url: 'https://github.com/Tavishi123-singh/Jenkins-terraform.git'
-				dir("./terraform") {
+				dir(".\terraform") {
 				sh 'echo "EXECUTING TERRAFORM APPLY !!"'
-				sh 'chmod u+x script.sh && ./script.sh'
+				sh 'chmod u+x script.sh && .\script.sh'
 				//sh 'terrfaorm init  && terraform apply --auto-approve'
 				}
 			}
