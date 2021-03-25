@@ -15,11 +15,11 @@ pipeline {
 			when { expression { ACTION == 'plan' } }
 			steps {
 				cleanWs()
-				git branch: "${params.BRANCH}", url: 'https://github.com/Tavishi123-singh/Jenkins-terraform/blob/main/terraform/task1.tf'
+				git branch: "${params.BRANCH}", url: 'https://github.com/Tavishi123-singh/Jenkins-terraform/blob/main/'
 				dir("./terraform"){
 				sh 'echo "EXECUTING TERRAFORM PLAN !!"'
-				//sh 'chmod u+x script.sh && ./script.sh'
-				sh 'terrfaorm init  && terraform plan'
+				sh 'chmod u+x script.sh && ./script.sh'
+				//sh 'terrfaorm init  && terraform plan'
 				
 				}
 			}
@@ -28,11 +28,11 @@ pipeline {
 			when { expression { ACTION == 'apply' } }
 			steps {
 				cleanWs()
-				git branch: "${params.BRANCH}", url: 'https://github.com/Tavishi123-singh/Jenkins-terraform/blob/main/terraform/task1.tf'
+				git branch: "${params.BRANCH}", url: 'https://github.com/Tavishi123-singh/Jenkins-terraform/blob/main/'
 				dir("./terraform") {
 				sh 'echo "EXECUTING TERRAFORM APPLY !!"'
-				//sh 'chmod u+x script.sh && ./script.sh'
-				sh 'terrfaorm init  && terraform apply --auto-approve'
+				sh 'chmod u+x script.sh && ./script.sh'
+				//sh 'terrfaorm init  && terraform apply --auto-approve'
 				}
 			}
 		}
