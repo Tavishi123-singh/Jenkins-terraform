@@ -29,7 +29,7 @@ pipeline {
 			steps {
 				cleanWs()
 				git branch: '${params.BRANCH}', credentialsId: '33fec8d7-35db-497f-a64c-b2ec0e2bc4df', url: 'https://github.com/Tavishi123-singh/Jenkins-terraform.git'
-				dir("./terraform"){
+				dir(".\terraform"){
 				sh 'echo "EXECUTING TERRAFORM PLAN !!"'
 				sh 'chmod u+x script.sh && ./script.sh'
 				sh 'terrfaorm init  && terraform plan'
@@ -42,7 +42,7 @@ pipeline {
 			steps {
 				cleanWs()
 				git branch: '${params.BRANCH}', credentialsId: '33fec8d7-35db-497f-a64c-b2ec0e2bc4df', url: 'https://github.com/Tavishi123-singh/Jenkins-terraform.git'
-				dir("./terraform") {
+				dir(".\terraform") {
 				sh 'echo "EXECUTING TERRAFORM APPLY !!"'
 				sh 'chmod u+x script.sh && ./script.sh'
 				sh 'terrfaorm init  && terraform apply --auto-approve'
