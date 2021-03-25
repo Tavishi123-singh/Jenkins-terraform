@@ -1,8 +1,8 @@
 pipeline {
   agent any
-  tools {
+  /*tools {
 	  terraform 'terraform-11'
-  }
+  }*/
   parameters {
 		choice (name: 'ACTION',
 				choices: [ 'plan', 'apply'],
