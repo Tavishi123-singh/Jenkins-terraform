@@ -1,6 +1,12 @@
-pipeline {
-  agent any
-  parameters {
+String credentialsId = 'awsCredentials'
+try{
+	stage('checkout'){
+		node{
+			cleanWs()
+			checkout scm
+		}
+	}
+	parameters {
 		choice (name: 'ACTION',
 			   choices: [ 'plan', 'apply'],
 			   description: 'Run terraform plan / apply')
@@ -10,40 +16,84 @@ pipeline {
 	        gitParameter branchFilter: 'origin/(.*)', defaultValue: '', name: 'BRANCH', type: 'PT_BRANCH'
 	  	//password (name: 'AWS_ACCESS_KEY_ID')
     		//password (name: 'AWS_SECRET_ACCESS_KEY')	
-    }
- /* environment {
-    TF_WORKSPACE = 'Task1' //Sets the Terraform Workspace
-    TF_IN_AUTOMATION = 'true'
-    AWS_ACCESS_KEY_ID = "${params.AWS_ACCESS_KEY_ID}"
-    AWS_SECRET_ACCESS_KEY = "${params.AWS_SECRET_ACCESS_KEY}"
-    //AWS_DEFAULT_REGION = "${params.AWS_REGION}"
-    PROFILE = "${params.PROFILE}"
-    ACTION = "${params.ACTION}"
-  }*/
-  stages {
-	stage('Terraform plan') {
-	when { expression { ACTION == 'plan' } }
-		steps {
-			//cleanWs()
-			git branch: '${params.BRANCH}', url: 'https://github.com/Tavishi123-singh/Jenkins-terraform.git'
-			dir("./terraform"){
-			sh 'echo "EXECUTING TERRAFORM PLAN !!"'
-			sh 'chmod u+x script.sh && ./script.sh'
-			sh 'terrfaorm init  && terraform plan'
+    	}
+	 environment {
+	 	//TF_WORKSPACE = 'Task1' //Sets the Terraform Workspace
+	 	//TF_IN_AUTOMATION = 'true'
+	 	//AWS_ACCESS_KEY_ID = "${params.AWS_ACCESS_KEY_ID}"
+	    	//AWS_SECRET_ACCESS_KEY = "${params.AWS_SECRET_ACCESS_KEY}"
+	    //AWS_DEFAULT_REGION = "${params.AWS_REGION}"
+	    	PROFILE = "${params.PROFILE}"
+	    	ACTION = "${params.ACTION}"
+	  }
+	stage('Terraform init'){
+		node{
+ 			withCredentials([[
+				$class: 'AmazonWebServicesCredentialsBinding',
+				credentialsId: credentialsId,
+				accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+				secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+			]]) {
+				ansiColor('xterm') {
+					sh 'terraform init'
 				}
 			}
 		}
-	stage('terraform apply') {
-	when { expression { ACTION == 'apply' } }
-		steps {
-			//cleanWs()
-			git branch: '${params.BRANCH}', url: 'https://github.com/Tavishi123-singh/Jenkins-terraform.git'
-			dir("./terraform") {
-			sh 'echo "EXECUTING TERRAFORM APPLY !!"'
-			sh 'chmod u+x script.sh && ./script.sh'
-			sh 'terrfaorm init  && terraform apply --auto-approve'
+	}
+	if ( env.ACTION == 'plan' ) {
+		stage('Terraform plan') {
+			node{
+				withCredentials([[
+					$class: 'AmazonWebServicesCredentialsBinding',
+					credentialsId: credentialsId,
+					accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+					secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+				]]) {
+					ansiColor('xterm'){
+						//cleanWs()
+						git branch: '${params.BRANCH}', url: 'https://github.com/Tavishi123-singh/Jenkins-terraform.git'
+						dir("./terraform"){
+						sh 'echo "EXECUTING TERRAFORM PLAN !!"'
+						sh 'chmod u+x script.sh && ./script.sh'
+						sh 'terraform plan'
+					}
 				}
 			}
 		}
+	}
+		
+	if ( env.ACTION == 'apply' ) {
+		stage('Terraform apply') {
+			node{
+				withCredentials([[
+					$class: 'AmazonWebServicesCredentialsBinding',
+					credentialsId: credentialsId,
+					accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+					secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+				]]) {
+					ansiColor('xterm'){
+						//cleanWs()
+						git branch: '${params.BRANCH}', url: 'https://github.com/Tavishi123-singh/Jenkins-terraform.git'
+						dir("./terraform"){
+						sh 'echo "EXECUTING TERRAFORM APPLY !!"'
+						sh 'chmod u+x script.sh && ./script.sh'
+						sh 'terraform apply --auto-approve'
+					}
+				}
+			}
+		}
+	}
+	currentBuild.result = 'SUCCESS'
+}
+catch (org.jenkinscli.plugins.workflow.steps.FlowIterruptedException flowError){
+	currentBuild.result = 'ABORTED'
+}
+catch (err){
+	currentBuild.result = 'FAILURE'
+	throw err
+}			
+finally{
+	if(currentBuild.result = 'SUCCESS'){
+		currentBuild.result = 'SUCCESS'
 	}
 }
