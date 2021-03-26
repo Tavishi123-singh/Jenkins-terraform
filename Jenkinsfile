@@ -85,7 +85,7 @@ try{
 	}
 	currentBuild.result = 'SUCCESS'
 }
-catch (org.jenkinscli.plugins.workflow.steps.FlowIterruptedException flowError){
+catch (org.jenkinsci.plugins.workflow.steps.FlowIterruptedException flowError){
 	currentBuild.result = 'ABORTED'
 }
 catch (err){
