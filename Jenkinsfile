@@ -1,3 +1,4 @@
+import org.jenkinsci.plugins.workflow.steps.FlowInterruptedException
 String credentialsId = 'awsCredentials'
 try{
 	stage('checkout'){
