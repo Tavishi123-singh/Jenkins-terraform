@@ -36,7 +36,7 @@ try{
 				secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
 			]]) {
 				ansiColor('xterm') {
-					sh 'terraform init'
+					bat 'terraform init'
 				}
 			}
 		}
@@ -54,9 +54,9 @@ try{
 						//cleanWs()
 						git branch: '${params.BRANCH}', url: 'https://github.com/Tavishi123-singh/Jenkins-terraform.git'
 						dir("./terraform"){
-						sh 'echo "EXECUTING TERRAFORM PLAN !!"'
-						sh 'chmod u+x script.sh && ./script.sh'
-						sh 'terraform plan'
+						bat 'echo "EXECUTING TERRAFORM PLAN !!"'
+						bat 'chmod u+x script.sh && ./script.sh'
+						bat 'terraform plan'
 					}
 				}
 			}
@@ -76,9 +76,9 @@ try{
 						//cleanWs()
 						git branch: '${params.BRANCH}', url: 'https://github.com/Tavishi123-singh/Jenkins-terraform.git'
 						dir("./terraform"){
-						sh 'echo "EXECUTING TERRAFORM APPLY !!"'
-						sh 'chmod u+x script.sh && ./script.sh'
-						sh 'terraform apply --auto-approve'
+						bat 'echo "EXECUTING TERRAFORM APPLY !!"'
+						bat 'chmod u+x script.sh && ./script.sh'
+						bat 'terraform apply --auto-approve'
 					}
 				}
 			}
